@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/67/trunk/FmiTextRecognition/src/com/fmitextrecognition/charSegmentation
+END
+CharSegmentator.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/67/trunk/FmiTextRecognition/src/com/fmitextrecognition/charSegmentation/CharSegmentator.java
+END
+Segmentator.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/!svn/ver/12/trunk/FmiTextRecognition/src/com/fmitextrecognition/charSegmentation/Segmentator.java
+END
+WhiteSpace.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/23/trunk/FmiTextRecognition/src/com/fmitextrecognition/charSegmentation/WhiteSpace.java
+END
+LineSegmentator.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/28/trunk/FmiTextRecognition/src/com/fmitextrecognition/charSegmentation/LineSegmentator.java
+END

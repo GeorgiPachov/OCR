@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/70/trunk/FmiTextRecognition/src/com/fmitextrecognition/characterclasses
+END
+CharacterClass.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/68/trunk/FmiTextRecognition/src/com/fmitextrecognition/characterclasses/CharacterClass.java
+END
+CharacterClassesFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/!svn/ver/70/trunk/FmiTextRecognition/src/com/fmitextrecognition/characterclasses/CharacterClassesFactory.java
+END
+CharacterClassComparator.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/!svn/ver/36/trunk/FmiTextRecognition/src/com/fmitextrecognition/characterclasses/CharacterClassComparator.java
+END

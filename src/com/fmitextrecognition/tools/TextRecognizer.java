@@ -1,0 +1,183 @@
+package com.fmitextrecognition.tools;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import com.fmitextrecognition.characterclasses.CharacterClass;
+import com.fmitextrecognition.characterclasses.CharacterClassesFactory;
+import com.fmitextrecognition.classifier.KNN;
+import com.fmitextrecognition.filters.BitmapFilter;
+import com.fmitextrecognition.filters.GreyscaleFilter;
+import com.fmitextrecognition.filters.NaiveBinarizationFilter;
+import com.fmitextrecognition.io.Bitmap;
+import com.fmitextrecognition.io.BitmapUtils;
+import com.fmitextrecognition.io.ConstantsAndThresholds;
+import com.fmitextrecognition.segmentation.BitmapTextReader;
+import com.fmitextrecognition.segmentation2.InputCharacter;
+import com.fmitextrecognition.segmentation2.InputLine;
+import com.fmitextrecognition.segmentation2.InputText;
+
+public class TextRecognizer {
+
+	private ExecutorService threadPool;
+
+	public TextRecognizer() {
+		this(ConstantsAndThresholds.NUMBER_OF_THREADS);
+	}
+	
+	public TextRecognizer(int cores){
+		this.threadPool = Executors.newFixedThreadPool(cores);
+	}
+
+	public Map<String, String> getText(Bitmap ourBitmap) throws IOException, InterruptedException, ExecutionException {
+		final Map<String, String> resultMap = new HashMap<String, String>();
+
+		ourBitmap = binarize(ourBitmap);
+
+		final List<CharacterClass> characterClasses = buildCharacterClasses();
+
+		final StringBuilder recognizedText3NN = new StringBuilder();
+		final BitmapTextReader reader = new BitmapTextReader();
+//		final KNN threeNN = new KNN(3, characterClasses);
+//
+//		final InputText inputText = new InputText(ourBitmap);
+//		int counter = 0;
+//
+//		final List<Future<StringBuilder>> lines = new ArrayList<Future<StringBuilder>>();
+//		for (final InputLine textLine : inputText.getLines()) {
+//			final int c = counter;
+//
+//			Callable<StringBuilder> runnable = new Callable<StringBuilder>() {
+//
+//				@Override
+//				public StringBuilder call() throws Exception {
+//					try {
+//						return recognizeLine(characterClasses, threeNN, c, textLine);
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//					return null;
+//				}
+//			};
+//
+//			lines.add(threadPool.submit(runnable));
+//			counter++;
+//		}
+//
+//		threadPool.shutdown();
+//		threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+//		for (Future<StringBuilder> line : lines) {
+//			recognizedText3NN.append(line.get()).append("\n");
+//		}
+
+		final String finalText3NN = postProcess(recognizedText3NN.toString());
+		resultMap.put("3NN", finalText3NN);
+		return resultMap;
+	}
+
+	private StringBuilder recognizeLine(List<CharacterClass> characterClasses, KNN threeNN, int counter, InputLine textLine)
+			throws IOException {
+		final StringBuilder builder = new StringBuilder();
+		for (InputCharacter character : textLine.getCharacters()) {
+
+			// if it is a space
+			if (character.getBitmap() == null) {
+				builder.append(" ");
+				if (ConstantsAndThresholds.NUMBER_OF_THREADS == 1) {
+					Logger.logWithoutNL(" ");
+				} else {
+					Logger.logWithoutNL("|");
+				}
+				continue;
+			}
+
+			char char3NN = threeNN.classify(character.getBitmap(), new HashMap<String, Integer>());
+			if (ConstantsAndThresholds.VERBOSE) {
+				reportMatchingOnConsole(char3NN, character.getBitmap());
+			}
+
+			builder.append(char3NN);
+			if (ConstantsAndThresholds.NUMBER_OF_THREADS == 1) {
+				Logger.logWithoutNL(Character.toString(char3NN));
+			} else {
+				Logger.logWithoutNL("|");
+			}
+		}
+		return builder;
+	}
+
+	private static String postProcess(String text) {
+		final StringBuilder textBuilder = new StringBuilder();
+		StringTokenizer tokenizer = new StringTokenizer(text, " ");
+		while (tokenizer.hasMoreElements()) {
+			String token = tokenizer.nextToken();
+
+			if (!isAllCapitals(token)) {
+				char[] tokenChars = token.toCharArray();
+
+				for (int i = 1; i < tokenChars.length; i++) {
+					tokenChars[i] = (char) Character.toLowerCase(tokenChars[i]);
+				}
+				token = new String(tokenChars);
+			}
+			textBuilder.append(new String(token) + " ");
+		}
+		return textBuilder.toString();
+	}
+
+	private static void reportMatchingOnConsole(char c, Bitmap input) {
+		String inputBitmap = BitmapUtils.toAsciiArt(input);
+		Logger.log(inputBitmap + " recognized as: " + c);
+	}
+
+	private static boolean isAllCapitals(String token) {
+		return Character.isUpperCase(token.charAt(0)) && Character.isUpperCase(token.charAt(token.length() - 1));
+	}
+
+	private static List<CharacterClass> buildCharacterClasses() {
+		long start = System.currentTimeMillis();
+		List<CharacterClass> characterClasses = CharacterClassesFactory.buildAsciiCharacterClasses();
+		long end = System.currentTimeMillis();
+		Logger.log("Building character classes took :" + (end - start) + "milliseconds");
+		return characterClasses;
+	}
+
+	private static Bitmap binarize(Bitmap ourBitmap) throws IOException {
+		final File testFile = ConstantsAndThresholds.TEST_WRITE_FILE;
+		for (BitmapFilter filter : buildFilterChain()) {
+			// filter
+			ourBitmap = filter.filter(ourBitmap);
+
+			File fileToSave = new File(testFile.getParentFile(), "_" + filter.getFilterName() + ".bmp");
+
+			if (ConstantsAndThresholds.DEBUG_MODE) {
+				// log
+				Logger.log("Writing result of " + filter.getFilterName() + " to " + fileToSave.getAbsolutePath());
+
+				// save
+				BitmapUtils.saveToFile(ourBitmap, fileToSave);
+			}
+		}
+		return ourBitmap;
+	}
+
+	private static List<BitmapFilter> buildFilterChain() {
+		List<BitmapFilter> filterChain = new ArrayList<BitmapFilter>();
+		filterChain.add(new GreyscaleFilter());
+		// filterChain.add(new BinarizationFilter());
+		// filterChain.add(new NoiseReductionFilter());
+		filterChain.add(new NaiveBinarizationFilter());
+		return filterChain;
+	}
+
+}
