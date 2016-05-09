@@ -6,8 +6,13 @@ It is an Eclipse based project, doesnt have native console-based build
 Import in either Eclipse/Netbeans/Idea  
 
 #### Build 
-Use the jar provided in /build  
-or build a 'fatjar' from your favourite IDE  
+```
+git clone https://github.com/GeorgiPachov/OCR.git
+cd OCR
+ant
+```
+OR you can the jar provided (ocr.jar)
+OR you can build/run a 'fatjar' from your favourite IDE  
 
 #### Usage
 Usage: textrecognizer.jar
