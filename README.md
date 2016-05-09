@@ -9,6 +9,7 @@ Import in either Eclipse/Netbeans/Idea
 ```
 git clone https://github.com/GeorgiPachov/OCR.git
 cd OCR
+vim build.properties # set jdk home
 ant
 ```
 OR you can the jar provided (ocr.jar)
