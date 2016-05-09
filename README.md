@@ -1,4 +1,4 @@
-# OCR
+# OCR/FmiTextReader
 A university-project OCR Software
 
 #### Code Browsing
