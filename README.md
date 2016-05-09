@@ -1,5 +1,5 @@
 # OCR/FmiTextReader
-A university-project OCR Software
+OCR software for an university project, with multithreading support
 
 #### Code Browsing
 It is an Eclipse based project, doesnt have native console-based build  
