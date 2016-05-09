@@ -3,6 +3,7 @@ package com.fmitextrecognition.io;
 import java.awt.Dimension;
 import java.io.File;
 
+import com.fmitextrecognition.utils.Utils;
 import org.apache.commons.cli.Options;
 
 public class ConstantsAndThresholds {
@@ -10,9 +11,9 @@ public class ConstantsAndThresholds {
 
 	public final static File TEST_FILE = new File(new File("").getAbsolutePath(), TEST_IMAGE_STRING);
 
-	public final static File WRITABLE_DIRECTORY = AllTests.isWindows() ? new File("C:\\Temp\\") : new File("/tmp/");
+	public final static File WRITABLE_DIRECTORY = Utils.isWindows() ? new File("C:\\Temp\\") : new File("/tmp/");
 
-	public final static File TEST_WRITE_FILE = AllTests.isWindows() ? new File(WRITABLE_DIRECTORY, "test.bmp") : new File(
+	public final static File TEST_WRITE_FILE = Utils.isWindows() ? new File(WRITABLE_DIRECTORY, "test.bmp") : new File(
 			WRITABLE_DIRECTORY, "test.bmp");
 
 	public static Dimension CHARACTER_CLASSES_DIMENSIONS = new Dimension(30, 30);

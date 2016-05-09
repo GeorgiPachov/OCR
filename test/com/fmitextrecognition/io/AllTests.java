@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.fmitextrecognition.characterclasses.CharacterClassesFactory;
@@ -22,12 +24,14 @@ public class AllTests {
 
 	private Bitmap bitmap;
 
-	private void setUp() throws IOException {
+	@Before
+	public void setUp() throws IOException {
 		ConstantsAndThresholds.TEST_WRITE_FILE.delete();
 		this.bitmap = BitmapUtils.readImage(ConstantsAndThresholds.TEST_FILE);
 	}
 
-	private void tearDown() {
+	@After
+	public void tearDown() {
 		ConstantsAndThresholds.TEST_WRITE_FILE.delete();
 	}
 
@@ -116,9 +120,6 @@ public class AllTests {
 		tearDown();
 	}
 
-	public static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().trim().contains("windows");
-	}
 
 	private static void asserting(boolean condition) {
 		if (!condition) {
