@@ -5,12 +5,13 @@ OCR software for an university project, with multithreading support
 It is an Eclipse based project, doesnt have native console-based build  
 Import in either Eclipse/Netbeans/Idea  
 
-#### Build 
+#### Build and run
 ```
 git clone https://github.com/GeorgiPachov/OCR.git
 cd OCR
 vim build.properties # set jdk home
 ant
+java -jar build/ocr.jar -file data/Shot.png
 ```
 OR you can the jar provided (ocr.jar)
 OR you can build/run a 'fatjar' from your favourite IDE  
