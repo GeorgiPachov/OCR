@@ -48,37 +48,37 @@ public class TextRecognizer {
 
 		final StringBuilder recognizedText3NN = new StringBuilder();
 		final BitmapTextReader reader = new BitmapTextReader();
-//		final KNN threeNN = new KNN(3, characterClasses);
-//
-//		final InputText inputText = new InputText(ourBitmap);
-//		int counter = 0;
-//
-//		final List<Future<StringBuilder>> lines = new ArrayList<Future<StringBuilder>>();
-//		for (final InputLine textLine : inputText.getLines()) {
-//			final int c = counter;
-//
-//			Callable<StringBuilder> runnable = new Callable<StringBuilder>() {
-//
-//				@Override
-//				public StringBuilder call() throws Exception {
-//					try {
-//						return recognizeLine(characterClasses, threeNN, c, textLine);
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//					return null;
-//				}
-//			};
-//
-//			lines.add(threadPool.submit(runnable));
-//			counter++;
-//		}
-//
-//		threadPool.shutdown();
-//		threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-//		for (Future<StringBuilder> line : lines) {
-//			recognizedText3NN.append(line.get()).append("\n");
-//		}
+		final KNN threeNN = new KNN(3, characterClasses);
+
+		final InputText inputText = new InputText(ourBitmap);
+		int counter = 0;
+
+		final List<Future<StringBuilder>> lines = new ArrayList<Future<StringBuilder>>();
+		for (final InputLine textLine : inputText.getLines()) {
+			final int c = counter;
+
+			Callable<StringBuilder> runnable = new Callable<StringBuilder>() {
+
+				@Override
+				public StringBuilder call() throws Exception {
+					try {
+						return recognizeLine(characterClasses, threeNN, c, textLine);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return null;
+				}
+			};
+
+			lines.add(threadPool.submit(runnable));
+			counter++;
+		}
+
+		threadPool.shutdown();
+		threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		for (Future<StringBuilder> line : lines) {
+			recognizedText3NN.append(line.get()).append("\n");
+		}
 
 		final String finalText3NN = postProcess(recognizedText3NN.toString());
 		resultMap.put("3NN", finalText3NN);
